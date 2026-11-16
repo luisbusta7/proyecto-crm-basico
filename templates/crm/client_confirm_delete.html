@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Eliminar cliente · CRM Básico{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-danger shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-3">¿Eliminar a «{{ object }}»?</h1>
+
+                {% with total=object.interactions.count %}
+                    {% if total %}
+                        <div class="alert alert-warning">
+                            También se eliminarán sus <strong>{{ total }}</strong> interacciones.
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <p class="text-muted">Esta acción no se puede deshacer.</p>
+
+                <form method="post" class="d-flex gap-2">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                    <a href="{{ object.get_absolute_url }}" class="btn btn-outline-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

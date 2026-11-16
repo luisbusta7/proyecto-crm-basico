@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
+from django.urls import reverse
 
 class User(AbstractUser):
     pass
@@ -52,6 +53,9 @@ class Client(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+    def get_absolute_url(self):
+        return reverse('crm:client_detail', kwargs={'pk': self.pk})
     
 
 class Interaction(models.Model):

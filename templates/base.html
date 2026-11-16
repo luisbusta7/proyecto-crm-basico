@@ -13,6 +13,7 @@
 
             {% if user.is_authenticated %}
                 <div class="d-flex align-items-center gap-3">
+                    <a class="nav-link text-light" href="{% url 'crm:client_list' %}">Clientes</a>
                     <span class="text-light">Hola, {{ user.get_full_name|default:user.username }}</span>
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
@@ -24,6 +25,9 @@
     </nav>
 
     <main class="container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
         {% block content %}{% endblock %}
     </main>
 </body>
