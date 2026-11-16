@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Eliminar interacción · CRM Básico{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-danger shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-3">¿Eliminar esta interacción?</h1>
+
+                <dl class="row mb-3">
+                    <dt class="col-sm-4">Cliente</dt>
+                    <dd class="col-sm-8">{{ object.client }}</dd>
+
+                    <dt class="col-sm-4">Tipo</dt>
+                    <dd class="col-sm-8">{{ object.get_kind_display }}</dd>
+
+                    <dt class="col-sm-4">Fecha</dt>
+                    <dd class="col-sm-8">{{ object.date|date:"d/m/Y H:i" }}</dd>
+
+                    <dt class="col-sm-4">Resumen</dt>
+                    <dd class="col-sm-8">{{ object.summary }}</dd>
+                </dl>
+
+                <p class="text-muted">Esta acción no se puede deshacer.</p>
+
+                <form method="post" class="d-flex gap-2">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                    <a href="{{ object.get_absolute_url }}" class="btn btn-outline-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

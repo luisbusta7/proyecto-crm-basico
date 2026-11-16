@@ -37,27 +37,42 @@
 
 <h2 class="h5 mb-3">Historial de interacciones</h2>
 
+<div id="interactions" class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 mb-0">Historial de interacciones</h2>
+    <a href="{% url 'crm:interaction_create' client.pk %}" class="btn btn-primary btn-sm">+ Nueva interacción</a>
+</div>
+
 <div class="card shadow-sm">
-    <table class="table mb-0">
+    <table class="table mb-0 align-middle">
         <thead class="table-light">
             <tr>
                 <th>Fecha</th>
                 <th>Tipo</th>
                 <th>Resumen</th>
                 <th>Registrada por</th>
+                <th class="text-end">Acciones</th>
             </tr>
         </thead>
         <tbody>
             {% for interaction in interactions %}
                 <tr>
-                    <td>{{ interaction.date|date:"d/m/Y H:i" }}</td>
-                    <td>{{ interaction.get_kind_display }}</td>
-                    <td>{{ interaction.summary }}</td>
+                    <td class="text-nowrap">{{ interaction.date|date:"d/m/Y H:i" }}</td>
+                    <td><span class="badge text-bg-secondary">{{ interaction.get_kind_display }}</span></td>
+                    <td>
+                        {{ interaction.summary }}
+                        {% if interaction.notes %}
+                            <div class="small text-muted">{{ interaction.notes|truncatechars:80 }}</div>
+                        {% endif %}
+                    </td>
                     <td>{{ interaction.user|default:"—" }}</td>
+                    <td class="text-end text-nowrap">
+                        <a href="{% url 'crm:interaction_update' interaction.pk %}" class="btn btn-outline-primary btn-sm">Editar</a>
+                        <a href="{% url 'crm:interaction_delete' interaction.pk %}" class="btn btn-outline-danger btn-sm">Eliminar</a>
+                    </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center text-muted py-4">Sin interacciones todavía.</td>
+                    <td colspan="5" class="text-center text-muted py-4">Sin interacciones todavía.</td>
                 </tr>
             {% endfor %}
         </tbody>

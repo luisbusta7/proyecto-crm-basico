@@ -92,3 +92,5 @@ class Interaction(models.Model):
     def __str__(self):
         return f"{self.get_kind_display()} con {self.client} el {self.date:%d/%m/%Y}"
         
+    def get_absolute_url(self):
+        return self.client.get_absolute_url() + f"#interaction-{self.pk}"
