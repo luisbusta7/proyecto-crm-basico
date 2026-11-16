@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio · CRM Básico{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Panel de inicio</h1>
+
+<div class="card shadow-sm" style="max-width: 320px;">
+    <div class="card-body">
+        <p class="text-muted mb-1">Mis clientes asignados</p>
+        <p class="display-6 mb-0">{{ my_clients_count }}</p>
+    </div>
+</div>
+{% endblock %}

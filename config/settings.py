@@ -61,7 +61,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,3 +132,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'crm:home' 
+LOGOUT_REDIRECT_URL = 'login'
