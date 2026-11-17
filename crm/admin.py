@@ -3,7 +3,18 @@ from django.contrib.auth.admin import UserAdmin
 
 from .models import Client, Company, Interaction, User
 
-admin.site.register(User, UserAdmin)
+
+@admin.register(User)
+class CustomUserAdmin(UserAdmin):
+    fieldsets = UserAdmin.fieldsets + (
+        ("CRM", {'fields': ('is_manager',)}),
+    )
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ("CRM", {'fields': ('is_manager',)}),
+    )
+    list_display = UserAdmin.list_display + ('is_manager',)
+    list_filter = UserAdmin.list_filter + ('is_manager',)
+
 
 
 class InteractionInline(admin.TabularInline):

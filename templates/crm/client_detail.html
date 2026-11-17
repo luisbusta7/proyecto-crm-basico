@@ -66,8 +66,12 @@
                     </td>
                     <td>{{ interaction.user|default:"—" }}</td>
                     <td class="text-end text-nowrap">
-                        <a href="{% url 'crm:interaction_update' interaction.pk %}" class="btn btn-outline-primary btn-sm">Editar</a>
-                        <a href="{% url 'crm:interaction_delete' interaction.pk %}" class="btn btn-outline-danger btn-sm">Eliminar</a>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'crm:client_update' client.pk %}" class="btn btn-outline-primary">Editar</a>
+                            {% if user.can_see_all %}
+                                <a href="{% url 'crm:client_delete' client.pk %}" class="btn btn-outline-danger">Eliminar</a>
+                            {% endif %}
+                        </div>
                     </td>
                 </tr>
             {% empty %}

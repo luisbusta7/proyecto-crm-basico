@@ -5,8 +5,12 @@ from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 
 class User(AbstractUser):
-    pass
+    is_manager = models.BooleanField("responsable comercial", default=False, help_text="Puede ver y gestionar los clientes de todos los comerciales")
 
+    @property
+    def can_see_all(self):
+        return self.is_manager or self.is_superuser
+    
 
 class Company(models.Model):
     name = models.CharField("nombre", max_length=150, unique=True )
@@ -23,7 +27,17 @@ class Company(models.Model):
         return self.name
 
 
+
+class ClientQuerySet(models.QuerySet):
+    def visible_to(self, user):
+        if user.can_see_all:
+            return self
+        return self.filter(sales_rep=user)
+
+
+
 class Client(models.Model):
+    objects = ClientQuerySet.as_manager()
     first_name = models.CharField("nombre", max_length=150)
     last_name = models.CharField("apellidos", max_length=150)
     email = models.EmailField("correo electrónico", unique=True)
@@ -58,6 +72,14 @@ class Client(models.Model):
         return reverse('crm:client_detail', kwargs={'pk': self.pk})
     
 
+class InteractionQuerySet(models.QuerySet):
+    def visible_to(self, user):
+        if user.can_see_all:
+            return self
+        return self.filter(user=user)
+
+    
+
 class Interaction(models.Model):
     class Kind(models.TextChoices):
         CALL = "call", "Llamada"
@@ -83,6 +105,7 @@ class Interaction(models.Model):
     created_at = models.DateTimeField("fecha de creación", default=timezone.now)
     notes = models.TextField("notas", blank=True)
     summary = models.TextField("resumen", max_length=500)
+    objects = InteractionQuerySet.as_manager()
 
     class Meta:
         verbose_name = 'interacción'

@@ -14,7 +14,10 @@
             {% if user.is_authenticated %}
                 <div class="d-flex align-items-center gap-3">
                     <a class="nav-link text-light" href="{% url 'crm:client_list' %}">Clientes</a>
-                    <span class="text-light">Hola, {{ user.get_full_name|default:user.username }}</span>
+                    <span class="text-light">
+                        Hola, {{ user.get_full_name|default:user.username }}
+                        {% if user.can_see_all %}<span class="badge text-bg-warning ms-1">Responsable</span>{% endif %}
+                    </span>
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-outline-light btn-sm">Cerrar sesión</button>

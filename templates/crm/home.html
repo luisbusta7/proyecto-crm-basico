@@ -5,10 +5,23 @@
 {% block content %}
 <h1 class="h3 mb-4">Panel de inicio</h1>
 
-<div class="card shadow-sm" style="max-width: 320px;">
-    <div class="card-body">
-        <p class="text-muted mb-1">Mis clientes asignados</p>
-        <p class="display-6 mb-0">{{ my_clients_count }}</p>
+<div class="d-flex flex-wrap gap-3">
+    <div class="card shadow-sm" style="min-width: 240px;">
+        <div class="card-body">
+            <p class="text-muted mb-1">Mis clientes asignados</p>
+            <p class="display-6 mb-0">{{ my_clients_count }}</p>
+        </div>
     </div>
+
+    {% if user.can_see_all %}
+        <div class="card shadow-sm" style="min-width: 240px;">
+            <div class="card-body">
+                <p class="text-muted mb-1">Clientes totales</p>
+                <p class="display-6 mb-0">{{ total_clients_count }}</p>
+            </div>
+        </div>
+    {% endif %}
 </div>
+
+<a href="{% url 'crm:client_list' %}" class="btn btn-primary mt-4">Ver clientes</a>
 {% endblock %}

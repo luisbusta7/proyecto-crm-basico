@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Acceso denegado · CRM Básico{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-5">403</h1>
+    <p class="lead">No tienes permiso para realizar esta acción.</p>
+    <a href="{% url 'crm:home' %}" class="btn btn-primary">Volver al inicio</a>
+</div>
+{% endblock %}
