@@ -67,6 +67,17 @@ class HomeView(LoginRequiredMixin, TemplateView):
 class ClientListView(LoginRequiredMixin, VisibleClientsMixin, ListView):
     model = Client
     paginate_by = 10
+    
+    
+    def get_queryset(self):
+        self.query = self.request.GET.get("q", "").strip()
+        return super().get_queryset().search(self.query)
+        
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["q"] = self.query
+        return context
 
 
 class ClientDetailView(LoginRequiredMixin, VisibleClientsMixin, DetailView):

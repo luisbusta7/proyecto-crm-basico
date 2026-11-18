@@ -8,6 +8,27 @@
     <a href="{% url 'crm:client_create' %}" class="btn btn-primary">+ Nuevo cliente</a>
 </div>
 
+<form method="get" class="d-flex gap-2 mb-3">
+    <input
+        type="search"
+        name="q"
+        value="{{ q }}"
+        class="form-control"
+        placeholder="Buscar por nombre, email o empresa…"
+        aria-label="Buscar clientes"
+    >
+    <button type="submit" class="btn btn-outline-primary">Buscar</button>
+    {% if q %}
+        <a href="{% url 'crm:client_list' %}" class="btn btn-outline-secondary">Limpiar</a>
+    {% endif %}
+</form>
+
+{% if q %}
+    <p class="text-muted small">
+        {{ paginator.count }} resultado{{ paginator.count|pluralize }} para «{{ q }}»
+    </p>
+{% endif %}
+
 <div class="card shadow-sm">
     <table class="table table-hover mb-0">
         <thead class="table-light">
@@ -28,7 +49,9 @@
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="{% if user.can_see_all %}4{% else %}3{% endif %}" class="text-center text-muted py-4">Todavía no hay clientes.</td>
+                    <td colspan="{% if user.can_see_all %}4{% else %}3{% endif %}" class="text-center text-muted py-4">
+                        {% if q %}No hay clientes que coincidan con «{{ q }}».{% else %}Todavía no hay clientes.{% endif %}
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -40,7 +63,7 @@
     <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}">Anterior</a>
             </li>
         {% endif %}
 
@@ -50,7 +73,7 @@
 
         {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}">Siguiente</a>
             </li>
         {% endif %}
     </ul>

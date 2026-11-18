@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.db.models import Q
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 
@@ -33,6 +34,18 @@ class ClientQuerySet(models.QuerySet):
         if user.can_see_all:
             return self
         return self.filter(sales_rep=user)
+    
+    def search(self, text):
+        queryset = self
+        for word in text.split():
+            queryset = queryset.filter(
+                Q(first_name__icontains=word) |
+                Q(last_name__icontains=word) |
+                Q(email__icontains=word) |
+                Q(phone__icontains=word) |
+                Q(company__name__icontains=word)
+            )
+        return queryset
 
 
 
