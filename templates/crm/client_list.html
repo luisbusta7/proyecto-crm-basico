@@ -3,9 +3,15 @@
 {% block title %}Clientes · CRM Básico{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
     <h1 class="h3 mb-0">{% if user.can_see_all %}Todos los clientes{% else %}Mis clientes{% endif %}</h1>
-    <a href="{% url 'crm:client_create' %}" class="btn btn-primary">+ Nuevo cliente</a>
+    <div class="d-flex gap-2">
+        <a href="{% url 'crm:client_export_csv' %}{% if q %}?q={{ q|urlencode }}{% endif %}"
+        class="btn btn-outline-secondary">Exportar CSV</a>
+        <a href="{% url 'crm:client_export_xlsx' %}{% if q %}?q={{ q|urlencode }}{% endif %}"
+        class="btn btn-outline-success">Exportar Excel</a>
+        <a href="{% url 'crm:client_create' %}" class="btn btn-primary">+ Nuevo cliente</a>
+    </div>
 </div>
 
 <form method="get" class="d-flex gap-2 mb-3">
