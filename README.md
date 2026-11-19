@@ -2,6 +2,18 @@
 
 Sistema de gestión de clientes para uso comercial, desarrollado con Django como primera tarea proyecto del módulo de Django del máster Full Stack.
 
+## Demo online
+
+🔗 http://134.209.255.251/
+
+| Usuario | Contraseña | Rol |
+|---|---|---|
+| comercial1 | DemoCRM2026 | Comercial: solo ve sus clientes |
+| comercial2 | DemoCRM2026 | Comercial: solo ve sus clientes |
+| responsable1 | DemoCRM2026 | Responsable: ve todos, reasigna y borra |
+
+Desplegado en un droplet de DigitalOcean (Ubuntu) con Nginx, Gunicorn y PostgreSQL.
+
 ## Funcionalidades
 
 - **CRUD de clientes** con paginación.
@@ -16,7 +28,8 @@ Sistema de gestión de clientes para uso comercial, desarrollado con Django como
 ## Tecnologías
 
 - Python 3 y Django
-- SQLite
+- SQLite en desarrollo y PostgreSQL en producción
+- Gunicorn y Nginx (servidor de producción)
 - Bootstrap 5 y Chart.js
 - openpyxl (exportación a Excel)
 - django-debug-toolbar y django-extensions (desarrollo)
