@@ -1,8 +1,14 @@
+import csv
+from datetime import timedelta
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Count, Max, Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.utils.functional import cached_property
+from django.utils import timezone
+from django.views import View
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -11,20 +17,11 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
-from django.db.models import Count, Max
-from django.http import HttpResponse
-from django.views import View
-from .forms import ClientForm, InteractionForm
-from .models import Client, Interaction
-from django.utils import timezone
-
-import csv  
-# importamos workbook de openpyxl
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
 
-
-
+from .forms import ClientForm, InteractionForm
+from .models import Client, Interaction
 
 
 # --- Mixins reutilizables ---
@@ -142,18 +139,17 @@ class InteractionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
     form_class = InteractionForm
     success_message = "Interacción registrada."
 
-    @cached_property
-    def client_obj(self):
+    def get_client(self):
         visible_clients = Client.objects.visible_to(self.request.user)
         return get_object_or_404(visible_clients, pk=self.kwargs["client_pk"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["client_obj"] = self.client_obj
+        context["client_obj"] = self.get_client()
         return context
 
     def form_valid(self, form):
-        form.instance.client = self.client_obj
+        form.instance.client = self.get_client()
         form.instance.user = self.request.user
         return super().form_valid(form)
 
@@ -181,7 +177,11 @@ class InteractionUpdateView(
 
 
 class InteractionDeleteView(
-    LoginRequiredMixin, VisibleInteractionsMixin, SuccessMessageMixin, DeleteView
+    LoginRequiredMixin,
+    ManagerRequiredMixin,
+    VisibleInteractionsMixin,
+    SuccessMessageMixin,
+    DeleteView,
 ):
     model = Interaction
     success_message = "Interacción eliminada."
@@ -306,3 +306,41 @@ class ClientExportExcelView(ClientExportBaseView):
         )
         workbook.save(response)
         return response
+
+
+# --- Estadísticas ---
+
+
+class StatsView(LoginRequiredMixin, TemplateView):
+    template_name = "crm/stats.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        clients = Client.objects.visible_to(user)
+        interactions = Interaction.objects.visible_to(user)
+        last_30_days = timezone.now() - timedelta(days=30)
+
+        context["clients_total"] = clients.count()
+        context["interactions_totals"] = interactions.aggregate(
+            total=Count("id"),
+            last_30=Count("id", filter=Q(date__gte=last_30_days)),
+        )
+
+        by_kind = (
+            interactions.values("kind")
+            .annotate(total=Count("id"))
+            .order_by("-total")
+        )
+        context["chart_data"] = {
+            "labels": [Interaction.Kind(row["kind"]).label for row in by_kind],
+            "values": [row["total"] for row in by_kind],
+        }
+
+        if user.can_see_all:
+            context["by_sales_rep"] = (
+                clients.values("sales_rep__username")
+                .annotate(total=Count("id"))
+                .order_by("-total")
+            )
+        return context

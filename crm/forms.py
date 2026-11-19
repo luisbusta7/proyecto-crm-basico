@@ -26,8 +26,8 @@ class ClientForm(BootstrapFormMixin, forms.ModelForm):
 class InteractionForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Interaction
-        fields = ['kind', 'date', 'notes', 'summary']
+        fields = ['kind', 'date', 'summary', 'notes']
         widgets = {
             'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
-            'notes': forms.Textarea(attrs={'rows': 4}),
+            'summary': forms.Textarea(attrs={'rows': 4}),
         }

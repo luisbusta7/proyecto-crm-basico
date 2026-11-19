@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Estadísticas · CRM Básico{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Estadísticas{% if not user.can_see_all %} de mis clientes{% endif %}</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted mb-1">Clientes</p>
+                <p class="display-6 mb-0">{{ clients_total }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted mb-1">Interacciones totales</p>
+                <p class="display-6 mb-0">{{ interactions_totals.total }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted mb-1">Interacciones (últimos 30 días)</p>
+                <p class="display-6 mb-0">{{ interactions_totals.last_30 }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Interacciones por tipo</h2>
+                {% if chart_data.values %}
+                    <canvas id="kindChart"></canvas>
+                {% else %}
+                    <p class="text-muted mb-0">Todavía no hay interacciones.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if user.can_see_all %}
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h2 class="h6 mb-3">Clientes por comercial</h2>
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr><th>Comercial</th><th class="text-end">Clientes</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for row in by_sales_rep %}
+                                    <tr>
+                                        <td>{{ row.sales_rep__username|default:"Sin asignar" }}</td>
+                                        <td class="text-end">{{ row.total }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{{ chart_data|json_script:"chart-data" }}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const data = JSON.parse(document.getElementById("chart-data").textContent);
+    const canvas = document.getElementById("kindChart");
+
+    if (canvas) {
+        new Chart(canvas, {
+            type: "doughnut",
+            data: {
+                labels: data.labels,
+                datasets: [{ data: data.values }],
+            },
+        });
+    }
+</script>
+{% endblock %}

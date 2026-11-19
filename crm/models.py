@@ -15,8 +15,8 @@ class User(AbstractUser):
 
 class Company(models.Model):
     name = models.CharField("nombre", max_length=150, unique=True )
-    website = models.URLField("sitio web", blank=True, null=True)
-    phone = models.CharField("teléfono", max_length=20, blank=True, null=True)
+    website = models.URLField("sitio web", blank=True)
+    phone = models.CharField("teléfono", max_length=20, blank=True)
     created_at = models.DateTimeField("fecha de creación", default=timezone.now)
     
     class Meta:
@@ -54,12 +54,14 @@ class Client(models.Model):
     first_name = models.CharField("nombre", max_length=150)
     last_name = models.CharField("apellidos", max_length=150)
     email = models.EmailField("correo electrónico", unique=True)
-    phone = models.CharField("teléfono", max_length=20, blank=True, null=True)
+    phone = models.CharField("teléfono", max_length=20, blank=True)
     company = models.ForeignKey(
         Company,
-        on_delete=models.CASCADE,
-        verbose_name="empresa",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="clients",
+        verbose_name="empresa",
     )
     sales_rep = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -69,7 +71,7 @@ class Client(models.Model):
         blank=True,
         null=True
     )
-    notes = models.TextField("notas", blank=True, null=True)
+    notes = models.TextField("notas", blank=True)
     created_at = models.DateTimeField("fecha de creación", default=timezone.now)
     updated_at = models.DateTimeField("fecha de actualización", auto_now=True)
 
@@ -89,7 +91,7 @@ class InteractionQuerySet(models.QuerySet):
     def visible_to(self, user):
         if user.can_see_all:
             return self
-        return self.filter(user=user)
+        return self.filter(client__sales_rep=user)
 
     
 
@@ -113,11 +115,11 @@ class Interaction(models.Model):
         related_name="interactions",
         null=True
     )
-    kind = models.TextField("tipo", max_length=10, choices=Kind.choices, default=Kind.CALL)
+    kind = models.CharField("tipo", max_length=10, choices=Kind.choices, default=Kind.CALL)
     date = models.DateTimeField("fecha", default=timezone.now)
     created_at = models.DateTimeField("fecha de creación", default=timezone.now)
     notes = models.TextField("notas", blank=True)
-    summary = models.TextField("resumen", max_length=500)
+    summary = models.CharField("resumen", max_length=500)
     objects = InteractionQuerySet.as_manager()
 
     class Meta:
