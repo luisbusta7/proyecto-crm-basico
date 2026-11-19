@@ -31,7 +31,7 @@ Sistema de gestión de clientes para uso comercial, desarrollado con Django como
 ## Instalación
 
 ```bash
-git clone <url-del-repositorio>
+git clone https://github.com/luisbusta7/proyecto-crm-basico.git
 cd proyecto-crm-basico
 python3 -m venv .venv
 source .venv/bin/activate
