@@ -1,6 +1,6 @@
 # CRM Básico
 
-Sistema de gestión de clientes para uso comercial, desarrollado con Django como proyecto final del módulo de Django del máster Full Stack.
+Sistema de gestión de clientes para uso comercial, desarrollado con Django como primera tarea proyecto del módulo de Django del máster Full Stack.
 
 ## Funcionalidades
 
